@@ -194,6 +194,7 @@ export default function DairyTracker() {
         ["--body" as string]: "'DM Sans', sans-serif",
         ["--serif" as string]: "'Fraunces', serif",
         ["--mono" as string]: "'DM Mono', monospace",
+        position: "relative",
         minHeight: "100vh",
         background: "#f2eee7",
         fontFamily: "var(--body)",
@@ -201,6 +202,8 @@ export default function DairyTracker() {
         paddingBottom: 80,
         maxWidth: 480,
         margin: "0 auto",
+        // On desktop this soft shadow lifts the app column off the page backdrop.
+        boxShadow: "0 0 60px rgba(58, 50, 38, 0.12)",
       }}
     >
       {/* ─── First-run onboarding overlay ─── */}

@@ -12,6 +12,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* On larger screens, give the centred app column an intentional backdrop
+   so it reads as a framed app rather than a stranded mobile view. */
+@media (min-width: 600px) {
+  body {
+    background: linear-gradient(165deg, #ece6da 0%, #ddd4c4 100%);
+    background-attachment: fixed;
+  }
+}
+
 /* Toast: horizontally-centred element, so it keeps the translateX(-50%). */
 @keyframes slideUp {
   from {
