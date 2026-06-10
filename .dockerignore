@@ -1,0 +1,27 @@
+# Build artifacts & deps (reinstalled/rebuilt inside the image)
+node_modules
+.next
+out
+build
+
+# VCS & local tooling
+.git
+.gitignore
+.vercel
+*.tsbuildinfo
+
+# Docs / scratch not needed at build time
+README.md
+reference
+files
+files.zip
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Env & logs
+.env*
+npm-debug.log*
+.DS_Store
