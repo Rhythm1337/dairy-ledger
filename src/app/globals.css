@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #f2eee7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ported from the prototype's runtime <style> block */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+input:focus {
+  border-color: #3a5a3a !important;
+  box-shadow: 0 0 0 3px rgba(45, 74, 45, 0.08);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+input[type="date"] {
+  min-height: 46px;
+}

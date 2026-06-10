@@ -1,0 +1,18 @@
+{
+  "name": "Dairy Ledger",
+  "short_name": "Dairy Ledger",
+  "description": "Track dairy purchases, verify bills, and keep monthly balances.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F0E8",
+  "theme_color": "#2D4A2D",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
