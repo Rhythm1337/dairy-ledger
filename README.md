@@ -12,7 +12,7 @@ Everything is saved in your browser. No account, no login.
 
 ## The other reason
 
-I'm also using this project to learn DevOps. It's a real app I actually use, so it's a good sandbox for testing and deploying — running it on servers, putting it in Docker, setting up pipelines, and generally messing around with that side of things.
+I'm also using this project to learn DevOps. It's a real app I actually use, so it's a good sandbox for testing and deploying, running it on servers, putting it in Docker, setting up pipelines, and generally messing around with that side of things.
 
 ## Running it
 
