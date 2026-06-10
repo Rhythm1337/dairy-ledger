@@ -112,7 +112,7 @@ export default function HistoryTab({
                 const diff = bill - mt;
                 return (
                   <div style={{ background: "#fefcf6", border: "1.5px solid #e8e0d0", borderRadius: 12, padding: 16, marginBottom: 12 }}>
-                    <div style={{ fontSize: 11, fontFamily: "var(--mono)", letterSpacing: 0.8, textTransform: "uppercase", opacity: 0.4, marginBottom: 10 }}>🔍 Verify Dairy&apos;s Bill</div>
+                    <div style={{ fontSize: 11, fontFamily: "var(--mono)", letterSpacing: 0.8, textTransform: "uppercase", opacity: 0.4, marginBottom: 10 }}>Verify Dairy&apos;s Bill</div>
                     <div style={{ fontSize: 12, color: "#8a8070", marginBottom: 10, lineHeight: 1.5 }}>Enter what the dairy charged you. We&apos;ll compare it against your records.</div>
                     <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
                       <div style={{ flex: 1 }}>
@@ -136,19 +136,16 @@ export default function HistoryTab({
                       >
                         {Math.abs(diff) < 1 ? (
                           <>
-                            <div style={{ fontSize: 20, marginBottom: 4 }}>✅</div>
-                            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--serif)", color: "#2d6a2d" }}>Bills match!</div>
+                            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--serif)", color: "#2d6a2d" }}>Bills match</div>
                             <div style={{ fontSize: 12, fontFamily: "var(--mono)", color: "#6a8a6a", marginTop: 4 }}>Difference: {fmt(Math.abs(diff))}</div>
                           </>
                         ) : diff > 0 ? (
                           <>
-                            <div style={{ fontSize: 20, marginBottom: 4 }}>⚠️</div>
                             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--serif)", color: "#c04040" }}>Overcharged by {fmt(diff)}</div>
                             <div style={{ fontSize: 12, fontFamily: "var(--mono)", color: "#a06060", marginTop: 4 }}>Dairy says {fmt(bill)} · You calculated {fmt(mt)}</div>
                           </>
                         ) : (
                           <>
-                            <div style={{ fontSize: 20, marginBottom: 4 }}>🤔</div>
                             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--serif)", color: "#2d6a2d" }}>Undercharged by {fmt(Math.abs(diff))}</div>
                             <div style={{ fontSize: 12, fontFamily: "var(--mono)", color: "#6a8a6a", marginTop: 4 }}>Dairy says {fmt(bill)} · You calculated {fmt(mt)}</div>
                           </>
@@ -188,9 +185,9 @@ export default function HistoryTab({
                     <span style={{ flex: 1, fontSize: 13 }}>
                       <strong>{fmt(p.amount)}</strong>
                       <span style={{ color: "#a09888", fontFamily: "var(--mono)", fontSize: 11, marginLeft: 6 }}>{fmtDate(p.date)}</span>
-                      {p.note && <span style={{ color: "#a09888", fontSize: 12, marginLeft: 4 }}>— {p.note}</span>}
+                      {p.note && <span style={{ color: "#a09888", fontSize: 12, marginLeft: 4 }}>· {p.note}</span>}
                     </span>
-                    <IconBtn icon="✕" onClick={() => deletePayment(p.id)} label="Remove" danger size={13} />
+                    <IconBtn icon="Remove" onClick={() => deletePayment(p.id)} label="Remove" danger size={12} />
                   </div>
                 ))}
               </div>
@@ -205,9 +202,9 @@ export default function HistoryTab({
                   <span style={{ fontSize: 13, marginLeft: 8 }}>{entryLine(e)}</span>
                 </div>
                 <span style={{ fontSize: 13, fontWeight: 600, fontFamily: "var(--serif)", color: "#2d4a2d", whiteSpace: "nowrap" }}>{fmt(entryCost(e, items))}</span>
-                <IconBtn icon="⊕" onClick={() => duplicateEntry(e)} label="Duplicate" size={14} />
-                <IconBtn icon="✏️" onClick={() => startEdit(e)} label="Edit" size={14} />
-                <IconBtn icon="🗑" onClick={() => deleteEntry(e.id)} label="Delete" danger size={14} />
+                <IconBtn icon="Copy" onClick={() => duplicateEntry(e)} label="Duplicate" size={12} />
+                <IconBtn icon="Edit" onClick={() => startEdit(e)} label="Edit" size={12} />
+                <IconBtn icon="Delete" onClick={() => deleteEntry(e.id)} label="Delete" danger size={12} />
               </div>
             ))}
           </Collapsible>

@@ -63,6 +63,7 @@ export interface ItemForm {
   rate: string;
   unitIdx: number;
   emoji: string;
+  presets: string; // comma-separated quick-amount buttons, e.g. "50, 100, 200"
 }
 
 export type TabId = "home" | "add" | "history" | "settings";

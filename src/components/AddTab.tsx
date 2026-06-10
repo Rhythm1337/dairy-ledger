@@ -19,7 +19,7 @@ export default function AddTab({ items, activeItems, form, setForm, editId, setE
   return (
     <div style={{ background: "#fff", border: "1.5px solid #e4ddd3", borderRadius: 16, padding: "22px 20px", boxShadow: "0 2px 12px rgba(58,50,38,0.05)" }}>
       <div style={{ fontSize: 13, fontWeight: 600, fontFamily: "var(--mono)", letterSpacing: 0.8, textTransform: "uppercase", opacity: 0.45, marginBottom: 16 }}>
-        {editId ? "✏️ Edit Entry" : "＋ New Entry"}
+        {editId ? "Edit Entry" : "New Entry"}
       </div>
 
       <label style={{ fontSize: 12, fontFamily: "var(--mono)", letterSpacing: 0.8, textTransform: "uppercase", opacity: 0.45, display: "block", marginBottom: 6 }}>Date</label>
@@ -30,36 +30,39 @@ export default function AddTab({ items, activeItems, form, setForm, editId, setE
           <label style={{ fontSize: 12, fontFamily: "var(--mono)", letterSpacing: 0.8, textTransform: "uppercase", opacity: 0.45, display: "block", marginBottom: 6 }}>
             {item.emoji} {item.name} ({item.entryUnit})
           </label>
-          <div style={{ display: "flex", gap: 6 }}>
-            <input
-              type="number"
-              step={item.step}
-              placeholder="0"
-              value={form.quantities[item.id] || ""}
-              onChange={(e) => setForm((f) => ({ ...f, quantities: { ...f.quantities, [item.id]: e.target.value } }))}
-              style={{ ...inp, flex: 1 }}
-            />
-            {item.presets.map((v) => (
-              <button
-                key={v}
-                onClick={() => setForm((f) => ({ ...f, quantities: { ...f.quantities, [item.id]: v.toString() } }))}
-                style={{
-                  background: (form.quantities[item.id] || "") === v.toString() ? "#2d4a2d" : "#f0ebe3",
-                  color: (form.quantities[item.id] || "") === v.toString() ? "#e8f5e0" : "#6a6050",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: "10px 4px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  minWidth: 38,
-                  fontFamily: "var(--mono)",
-                }}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
+          <input
+            type="number"
+            step={item.step}
+            placeholder={`Type any amount in ${item.entryUnit}`}
+            value={form.quantities[item.id] || ""}
+            onChange={(e) => setForm((f) => ({ ...f, quantities: { ...f.quantities, [item.id]: e.target.value } }))}
+            style={{ ...inp, marginBottom: 8 }}
+          />
+          {item.presets.length > 0 && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {item.presets.map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setForm((f) => ({ ...f, quantities: { ...f.quantities, [item.id]: v.toString() } }))}
+                  style={{
+                    background: (form.quantities[item.id] || "") === v.toString() ? "#2d4a2d" : "#f0ebe3",
+                    color: (form.quantities[item.id] || "") === v.toString() ? "#e8f5e0" : "#6a6050",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "10px 8px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    flex: "1 1 auto",
+                    minWidth: 44,
+                    fontFamily: "var(--mono)",
+                  }}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       ))}
 

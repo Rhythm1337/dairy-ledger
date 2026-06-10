@@ -1,22 +1,23 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { loadData, saveData } from "@/lib/storage";
+import { loadData, saveData, hasOnboarded, setOnboarded } from "@/lib/storage";
 import { UNIT_OPTIONS, EMOJI_OPTIONS, DEFAULT_STATE } from "@/lib/constants";
 import { fmt, todayStr, uid, monthKey, entryCost } from "@/lib/utils";
 import { inp, primaryBtn, secondaryBtn } from "@/lib/styles";
 import { Modal } from "./ui";
+import Onboarding from "./Onboarding";
 import HomeTab from "./HomeTab";
 import AddTab from "./AddTab";
 import HistoryTab from "./HistoryTab";
 import SettingsTab from "./SettingsTab";
 import type { AppData, Entry, Item, EntryForm, PayForm, ItemForm, ItemModalState, TabId } from "@/lib/types";
 
-const tabList: { id: TabId; icon: string; label: string }[] = [
-  { id: "home", icon: "🏠", label: "Home" },
-  { id: "add", icon: "＋", label: "Add" },
-  { id: "history", icon: "📋", label: "History" },
-  { id: "settings", icon: "⚙", label: "Settings" },
+const tabList: { id: TabId; label: string }[] = [
+  { id: "home", label: "Home" },
+  { id: "add", label: "Add" },
+  { id: "history", label: "History" },
+  { id: "settings", label: "Settings" },
 ];
 
 export default function DairyTracker() {
@@ -28,13 +29,21 @@ export default function DairyTracker() {
   const [payMonth, setPayMonth] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [itemModal, setItemModal] = useState<ItemModalState>(null);
-  const [itemForm, setItemForm] = useState<ItemForm>({ name: "", rate: "", unitIdx: 0, emoji: "📦" });
+  const [itemForm, setItemForm] = useState<ItemForm>({ name: "", rate: "", unitIdx: 0, emoji: "📦", presets: "" });
   const [verifyMonth, setVerifyMonth] = useState<string | null>(null);
   const [dairyBill, setDairyBill] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     setData(loadData());
+    setShowOnboarding(!hasOnboarded());
   }, []);
+
+  const finishOnboarding = () => {
+    setOnboarded(true);
+    setShowOnboarding(false);
+  };
+  const replayOnboarding = () => setShowOnboarding(true);
 
   const save = useCallback((updater: AppData | ((prev: AppData) => AppData)) => {
     setData((prev) => {
@@ -137,12 +146,12 @@ export default function DairyTracker() {
 
   // ── Item CRUD ──
   const openNewItem = () => {
-    setItemForm({ name: "", rate: "", unitIdx: 0, emoji: "📦" });
+    setItemForm({ name: "", rate: "", unitIdx: 0, emoji: "📦", presets: UNIT_OPTIONS[0].presets.join(", ") });
     setItemModal("new");
   };
   const openEditItem = (item: Item) => {
     const unitIdx = UNIT_OPTIONS.findIndex((u) => u.unit === item.unit && u.entryUnit === item.entryUnit);
-    setItemForm({ name: item.name, rate: item.rate.toString(), unitIdx: unitIdx >= 0 ? unitIdx : 0, emoji: item.emoji || "📦" });
+    setItemForm({ name: item.name, rate: item.rate.toString(), unitIdx: unitIdx >= 0 ? unitIdx : 0, emoji: item.emoji || "📦", presets: item.presets.join(", ") });
     setItemModal(item);
   };
   const saveItem = () => {
@@ -150,15 +159,21 @@ export default function DairyTracker() {
     const rate = parseFloat(itemForm.rate) || 0;
     if (!name || rate <= 0) return;
     const u = UNIT_OPTIONS[itemForm.unitIdx];
+    // Parse the comma-separated quick amounts; fall back to the unit's defaults if none are valid.
+    const parsedPresets = itemForm.presets
+      .split(",")
+      .map((s) => parseFloat(s.trim()))
+      .filter((n) => !isNaN(n) && n > 0);
+    const presets = parsedPresets.length > 0 ? parsedPresets : u.presets;
     if (itemModal === "new") {
-      const newItem: Item = { id: uid(), name, rate, unit: u.unit, entryUnit: u.entryUnit, divisor: u.divisor, step: u.step, presets: u.presets, emoji: itemForm.emoji, enabled: true };
+      const newItem: Item = { id: uid(), name, rate, unit: u.unit, entryUnit: u.entryUnit, divisor: u.divisor, step: u.step, presets, emoji: itemForm.emoji, enabled: true };
       save((prev) => ({ ...prev, items: [...prev.items, newItem] }));
       flash(`${name} added ✓`);
     } else if (itemModal) {
       const editing = itemModal;
       save((prev) => ({
         ...prev,
-        items: prev.items.map((i) => (i.id === editing.id ? { ...i, name, rate, unit: u.unit, entryUnit: u.entryUnit, divisor: u.divisor, step: u.step, presets: u.presets, emoji: itemForm.emoji } : i)),
+        items: prev.items.map((i) => (i.id === editing.id ? { ...i, name, rate, unit: u.unit, entryUnit: u.entryUnit, divisor: u.divisor, step: u.step, presets, emoji: itemForm.emoji } : i)),
       }));
       flash(`${name} updated ✓`);
     }
@@ -188,9 +203,11 @@ export default function DairyTracker() {
         margin: "0 auto",
       }}
     >
+      {/* ─── First-run onboarding overlay ─── */}
+      {showOnboarding && <Onboarding onDone={finishOnboarding} goHome={() => setTab("home")} />}
+
       {/* ─── Header ─── */}
       <div style={{ background: "linear-gradient(135deg, #1a2e1a 0%, #3a5a3a 50%, #2d4a2d 100%)", padding: "28px 20px 22px", color: "#e8f5e0", borderRadius: "0 0 20px 20px", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: -30, right: -20, fontSize: 120, opacity: 0.06 }}>🥛</div>
         <div style={{ fontSize: 11, fontFamily: "var(--mono)", letterSpacing: 2.5, textTransform: "uppercase", opacity: 0.5, marginBottom: 4 }}>Purchase Tracker</div>
         <h1 style={{ fontSize: 28, fontFamily: "var(--serif)", fontWeight: 900, margin: 0, lineHeight: 1.1 }}>Dairy Ledger</h1>
         <div style={{ marginTop: 16, background: "rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, backdropFilter: "blur(8px)" }}>
@@ -211,7 +228,7 @@ export default function DairyTracker() {
         </div>
       </div>
 
-      <div style={{ padding: "16px 16px 0" }}>
+      <div key={tab} style={{ padding: "16px 16px 0", animation: "fadeInUp 0.25s ease" }}>
         {tab === "home" && (
           <HomeTab
             items={items}
@@ -264,7 +281,7 @@ export default function DairyTracker() {
         )}
 
         {tab === "settings" && (
-          <SettingsTab data={data} items={items} entries={entries} payments={payments} save={save} flash={flash} toggleItem={toggleItem} openEditItem={openEditItem} openNewItem={openNewItem} />
+          <SettingsTab data={data} items={items} entries={entries} payments={payments} save={save} flash={flash} toggleItem={toggleItem} openEditItem={openEditItem} openNewItem={openNewItem} onReplayIntro={replayOnboarding} />
         )}
       </div>
 
@@ -292,7 +309,7 @@ export default function DairyTracker() {
             {UNIT_OPTIONS.map((u, i) => (
               <button
                 key={i}
-                onClick={() => setItemForm((f) => ({ ...f, unitIdx: i }))}
+                onClick={() => setItemForm((f) => ({ ...f, unitIdx: i, presets: UNIT_OPTIONS[i].presets.join(", ") }))}
                 style={{
                   padding: "8px 14px",
                   borderRadius: 8,
@@ -310,7 +327,20 @@ export default function DairyTracker() {
           </div>
 
           <label style={{ fontSize: 12, fontFamily: "var(--mono)", opacity: 0.45, display: "block", marginBottom: 4 }}>Rate (₹ per {UNIT_OPTIONS[itemForm.unitIdx].unit})</label>
-          <input type="number" value={itemForm.rate} onChange={(e) => setItemForm((f) => ({ ...f, rate: e.target.value }))} placeholder="0" style={{ ...inp, marginBottom: 18 }} />
+          <input type="number" value={itemForm.rate} onChange={(e) => setItemForm((f) => ({ ...f, rate: e.target.value }))} placeholder="0" style={{ ...inp, marginBottom: 14 }} />
+
+          <label style={{ fontSize: 12, fontFamily: "var(--mono)", opacity: 0.45, display: "block", marginBottom: 4 }}>
+            Quick Amounts ({UNIT_OPTIONS[itemForm.unitIdx].entryUnit})
+          </label>
+          <input
+            value={itemForm.presets}
+            onChange={(e) => setItemForm((f) => ({ ...f, presets: e.target.value }))}
+            placeholder="e.g. 50, 100, 200, 250"
+            style={{ ...inp, marginBottom: 6 }}
+          />
+          <div style={{ fontSize: 11, fontFamily: "var(--mono)", color: "#a09888", marginBottom: 18, lineHeight: 1.4 }}>
+            Comma-separated buttons shown on the Add screen. Leave blank for defaults — you can always type any amount.
+          </div>
 
           <button onClick={saveItem} style={{ ...primaryBtn, marginBottom: 10 }}>{itemModal === "new" ? "Add Product" : "Save Changes"}</button>
 
@@ -346,6 +376,7 @@ export default function DairyTracker() {
         {tabList.map((t) => (
           <button
             key={t.id}
+            id={`tour-tab-${t.id}`}
             onClick={() => setTab(t.id)}
             style={{
               background: "none",
@@ -354,17 +385,18 @@ export default function DairyTracker() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 2,
-              padding: "8px 16px",
+              gap: 4,
+              padding: "12px 16px",
               borderRadius: 10,
               color: tab === t.id ? "#2d4a2d" : "#b0a898",
               fontFamily: "var(--body)",
-              fontSize: 10,
-              fontWeight: 600,
+              fontSize: 13,
+              fontWeight: tab === t.id ? 700 : 500,
+              letterSpacing: 0.2,
               transition: "color 0.15s",
             }}
           >
-            <span style={{ fontSize: 20 }}>{t.icon}</span>
+            <span style={{ width: 18, height: 3, borderRadius: 2, background: tab === t.id ? "#2d4a2d" : "transparent" }} />
             <span>{t.label}</span>
           </button>
         ))}

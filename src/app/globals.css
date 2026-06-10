@@ -12,7 +12,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Ported from the prototype's runtime <style> block */
+/* Toast: horizontally-centred element, so it keeps the translateX(-50%). */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -24,13 +24,59 @@ body {
   }
 }
 
+/* Modal card: rises straight up (no horizontal shift). */
+@keyframes modalUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Generic fade + small rise, used for tab content and expanding sections. */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 input:focus {
   border-color: #3a5a3a !important;
   box-shadow: 0 0 0 3px rgba(45, 74, 45, 0.08);
 }
 
+button {
+  transition: transform 0.08s ease, background 0.18s ease, color 0.18s ease, opacity 0.18s ease;
+}
+
 button:active {
   transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 * {

@@ -50,7 +50,7 @@ export default function HomeTab({
     if (!qItem) return null;
     const qVal = quickDefaults[qItem.id] || 0;
     return (
-      <div style={{ background: "#fff", border: "1.5px solid #e4ddd3", borderRadius: 14, padding: "16px 18px", marginBottom: 12, boxShadow: "0 1px 6px rgba(58,50,38,0.04)" }}>
+      <div id="tour-quickadd" style={{ background: "#fff", border: "1.5px solid #e4ddd3", borderRadius: 14, padding: "16px 18px", marginBottom: 12, boxShadow: "0 1px 6px rgba(58,50,38,0.04)" }}>
         <div style={{ fontSize: 11, fontFamily: "var(--mono)", letterSpacing: 1, textTransform: "uppercase", opacity: 0.4, marginBottom: 10 }}>Quick Add Today</div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", background: "#faf8f5", border: "1.5px solid #ddd7cc", borderRadius: 10, overflow: "hidden", flex: 1 }}>
@@ -70,8 +70,8 @@ export default function HomeTab({
               +
             </button>
           </div>
-          <button onClick={quickAdd} style={{ ...primaryBtn, width: "auto", padding: "12px 22px", borderRadius: 10, display: "flex", alignItems: "center", gap: 6 }}>
-            {qItem.emoji} Add
+          <button onClick={quickAdd} style={{ ...primaryBtn, width: "auto", padding: "12px 28px", borderRadius: 10 }}>
+            Add
           </button>
         </div>
       </div>
@@ -152,12 +152,12 @@ export default function HomeTab({
               <div style={{ fontSize: 13, fontWeight: 500, marginTop: 2 }}>{entryLine(e)}</div>
             </div>
             <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "var(--serif)", color: "#2d4a2d", whiteSpace: "nowrap" }}>{fmt(entryCost(e, items))}</span>
-            <IconBtn icon="⊕" onClick={() => duplicateEntry(e)} label="Duplicate for today" />
-            <IconBtn icon="✏️" onClick={() => startEdit(e)} label="Edit" />
-            <IconBtn icon="🗑" onClick={() => deleteEntry(e.id)} label="Delete" danger />
+            <IconBtn icon="Copy" onClick={() => duplicateEntry(e)} label="Duplicate for today" size={12} />
+            <IconBtn icon="Edit" onClick={() => startEdit(e)} label="Edit" size={12} />
+            <IconBtn icon="Delete" onClick={() => deleteEntry(e.id)} label="Delete" danger size={12} />
           </div>
         ))}
-        {entries.length === 0 && <div style={{ textAlign: "center", padding: "24px 0", color: "#b0a898", fontFamily: "var(--mono)", fontSize: 13 }}>No entries yet — tap ＋ to add</div>}
+        {entries.length === 0 && <div style={{ textAlign: "center", padding: "24px 0", color: "#b0a898", fontFamily: "var(--mono)", fontSize: 13 }}>No entries yet. Use the Add tab to start</div>}
         {entries.length > 6 && <button onClick={() => setTab("history")} style={{ ...secondaryBtn, marginTop: 10, fontSize: 13, padding: "10px 0" }}>View All History →</button>}
       </Collapsible>
     </>

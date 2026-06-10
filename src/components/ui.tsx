@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 export function Badge({ children, color = "#2d6a2d", bg = "#e0f0e0" }: { children: ReactNode; color?: string; bg?: string }) {
   return (
@@ -27,15 +27,24 @@ export function Collapsible({ title, badge, children, defaultOpen = true }: { ti
         {badge}
         <span style={{ fontSize: 12, color: "#b0a898", transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0)" }}>▼</span>
       </button>
-      {open && <div style={{ padding: "0 18px 16px" }}>{children}</div>}
+      {open && <div style={{ padding: "0 18px 16px", animation: "fadeIn 0.2s ease" }}>{children}</div>}
     </div>
   );
 }
 
 export function Modal({ title, onClose, children }: { title: ReactNode; onClose: () => void; children: ReactNode }) {
+  // Lock background scroll while the modal is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onClose}>
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.35)", backdropFilter: "blur(4px)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.35)", backdropFilter: "blur(4px)", animation: "fadeIn 0.2s ease" }} />
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -47,7 +56,7 @@ export function Modal({ title, onClose, children }: { title: ReactNode; onClose:
           maxHeight: "85vh",
           overflow: "auto",
           padding: "24px 20px env(safe-area-inset-bottom, 20px)",
-          animation: "slideUp 0.25s ease",
+          animation: "modalUp 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>

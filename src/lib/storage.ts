@@ -54,6 +54,30 @@ export function exportData(data: AppData): void {
   URL.revokeObjectURL(url);
 }
 
+// ─── First-run onboarding flag (kept separate from app data / backups) ───
+
+const ONBOARDED_KEY = "dairy-ledger-onboarded";
+
+export function hasOnboarded(): boolean {
+  // During SSR, assume onboarded so the intro never flashes on the server render.
+  if (typeof window === "undefined") return true;
+  try {
+    return window.localStorage.getItem(ONBOARDED_KEY) === "1";
+  } catch {
+    return true;
+  }
+}
+
+export function setOnboarded(value: boolean): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (value) window.localStorage.setItem(ONBOARDED_KEY, "1");
+    else window.localStorage.removeItem(ONBOARDED_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 export function importData(file: File): Promise<AppData> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -61,12 +85,12 @@ export function importData(file: File): Promise<AppData> {
       try {
         const parsed = JSON.parse(e.target?.result as string);
         if (!parsed.items || !Array.isArray(parsed.entries) || !Array.isArray(parsed.payments)) {
-          reject(new Error("Invalid backup file — missing items, entries, or payments."));
+          reject(new Error("Invalid backup file. It is missing items, entries, or payments."));
           return;
         }
         resolve(parsed as AppData);
       } catch {
-        reject(new Error("Could not parse file — is it a valid JSON backup?"));
+        reject(new Error("Could not read the file. Is it a valid JSON backup?"));
       }
     };
     reader.onerror = () => reject(new Error("Failed to read file."));
