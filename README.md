@@ -1,4 +1,4 @@
-# Dairy Ledger
+# Dairy Ledger (Vibe)
 
 A small app to keep track of how much milk and other dairy we buy every day.
 
