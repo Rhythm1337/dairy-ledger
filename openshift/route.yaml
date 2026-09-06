@@ -1,0 +1,10 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dairy-ledger
+spec:
+  to:
+    kind: Service
+    name: dairy-ledger
+  port:
+    targetPort: 3000

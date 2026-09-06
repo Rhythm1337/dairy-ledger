@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dairy-ledger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dairy-ledger
+  template:
+    metadata:
+      labels:
+        app: dairy-ledger
+    spec:
+      containers:
+        - name: dairy-ledger
+          image: ghcr.io/rhythm1337/dairy-ledger:latest
+          ports:
+            - containerPort: 3000
